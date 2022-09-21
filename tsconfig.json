@@ -3,7 +3,8 @@
         "module": "commonjs",
         "target": "esnext",
         "sourceMap": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "outDir": "dist"
     },
     "include": ["src"],
     "exclude": [
