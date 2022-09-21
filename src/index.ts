@@ -155,7 +155,7 @@ export default class Config {
     for (const key of Object.keys(json)) {
       const value = json[key];
 
-      switch (value) {
+      switch (true) {
         case Array.isArray(value):
           this.set(key, [...(this.array(key) ?? []), ...value]);
           break;
