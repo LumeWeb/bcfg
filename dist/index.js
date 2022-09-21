@@ -137,7 +137,9 @@ class Config {
     saveConfigJson(file, data) {
         (0, bsert_1.default)(typeof data === "object");
         (0, bsert_1.default)(!Array.isArray(data));
-        fs_1.default.writeFileSync(path_1.default.join(this.str("configdir"), file), JSON.stringify(data));
+        const fullPath = path_1.default.join(this.str("configdir"), file);
+        fs_1.default.writeFileSync(fullPath, JSON.stringify(data));
+        this.openJson(fullPath);
     }
     filter(name) {
         (0, bsert_1.default)(typeof name === "string");
