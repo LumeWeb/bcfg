@@ -21,7 +21,7 @@ class Config {
     prefix;
     suffix;
     fallback;
-    options;
+    options = {};
     alias = {};
     data = {};
     env = {};
