@@ -173,19 +173,19 @@ class Config {
         (0, bsert_1.default)(typeof key === "string", "Key must be a string.");
         key = key.replace(/-/g, "");
         key = key.toLowerCase();
-        if (this.hash[key] !== null) {
+        if (key in this.hash && this.hash[key] !== null) {
             return true;
         }
-        if (this.query[key] !== null) {
+        if (key in this.query && this.query[key] !== null) {
             return true;
         }
-        if (this.args[key] !== null) {
+        if (key in this.args && this.args[key] !== null) {
             return true;
         }
-        if (this.env[key] !== null) {
+        if (key in this.env && this.env[key] !== null) {
             return true;
         }
-        if (this.data[key] !== null) {
+        if (key in this.data && this.data[key] !== null) {
             return true;
         }
         return this.options[key] !== null;
@@ -214,22 +214,22 @@ class Config {
         (0, bsert_1.default)(typeof key === "string", "Key must be a string.");
         key = key.replace(/-/g, "");
         key = key.toLowerCase();
-        if (this.hash[key] !== null) {
+        if (key in this.hash && this.hash[key] !== null) {
             return this.hash[key];
         }
-        if (this.query[key] !== null) {
+        if (key in this.query && this.query[key] !== null) {
             return this.query[key];
         }
-        if (this.args[key] !== null) {
+        if (key in this.args && this.args[key] !== null) {
             return this.args[key];
         }
-        if (this.env[key] !== null) {
+        if (key in this.env && this.env[key] !== null) {
             return this.env[key];
         }
-        if (this.data[key] !== null) {
+        if (key in this.data && this.data[key] !== null) {
             return this.data[key];
         }
-        if (this.options[key] !== null) {
+        if (key in this.options && this.options[key] !== null) {
             return this.options[key];
         }
         return fallback;
