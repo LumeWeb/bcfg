@@ -116,6 +116,7 @@ class Config {
 
     this.prefix = this.getPrefix();
   }
+
   public open(file: string) {
     const path = this.getFile(file);
 
@@ -128,6 +129,45 @@ class Config {
     }
 
     this.parseConfig(text);
+
+    this.prefix = this.getPrefix();
+  }
+
+  public openDir(dir: string) {
+    assert(fs.existsSync(dir), `Directory ${dir} does not exist`);
+
+    let files = fs.readdirSync(dir).map((item) => Path.join(dir, item));
+    files.forEach(this.openJson);
+  }
+
+  public openJson(file: string) {
+    const path = this.getFile(file);
+
+    let json;
+    try {
+      json = fs.readFileSync(path, "utf8");
+      json = JSON.parse(json);
+    } catch (e) {
+      if (e.code === "ENOENT") return;
+      throw e;
+    }
+
+    assert(typeof json === "object", `Config file ${file} must be an object`);
+
+    for (const key of Object.keys(json)) {
+      const value = json[key];
+
+      switch (value) {
+        case Array.isArray(value):
+          let newVal = this.array(key) ?? [];
+          newVal.push(value);
+          this.set(key, newVal);
+          break;
+        default:
+          this.set(key, value);
+          break;
+      }
+    }
 
     this.prefix = this.getPrefix();
   }
@@ -475,7 +515,6 @@ class Config {
 
     const parts = value.trim().split(/\s*,\s*/);
     const result = [];
-    ``;
     for (const part of parts) {
       if (part.length === 0) {
         continue;
