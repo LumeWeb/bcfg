@@ -20,11 +20,11 @@ export interface Options {
 }
 
 export interface LoadOptions {
-  hash?: string;
-  query?: string;
-  env?: object;
-  argv?: string[];
-  config?: string;
+  hash?: string | boolean;
+  query?: string | boolean;
+  env?: object | boolean;
+  argv?: string[] | boolean;
+  config?: string | boolean;
 }
 
 /**
@@ -99,19 +99,19 @@ export default class Config {
 
   public load(options: LoadOptions) {
     if (options.hash) {
-      this.parseHash(options.hash);
+      this.parseHash(options.hash as string);
     }
 
     if (options.query) {
-      this.parseQuery(options.query);
+      this.parseQuery(options.query as string);
     }
 
     if (options.env) {
-      this.parseEnv(options.env);
+      this.parseEnv(options.env as object);
     }
 
     if (options.argv) {
-      this.parseArg(options.argv);
+      this.parseArg(options.argv as string[]);
     }
 
     this.prefix = this.getPrefix();
