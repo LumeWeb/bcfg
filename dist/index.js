@@ -107,10 +107,9 @@ class Config {
         files.forEach(this.openJson);
     }
     openJson(file) {
-        const path = this.getFile(file);
         let json;
         try {
-            json = fs_1.default.readFileSync(path, "utf8");
+            json = fs_1.default.readFileSync(file, "utf8");
             json = JSON.parse(json);
         }
         catch (e) {
