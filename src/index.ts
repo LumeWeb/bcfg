@@ -137,7 +137,7 @@ export default class Config {
     assert(fs.existsSync(dir), `Directory ${dir} does not exist`);
 
     let files = fs.readdirSync(dir).map((item) => Path.join(dir, item));
-    files.forEach(this.openJson);
+    files.forEach(this.openJson.bind(this));
   }
 
   public openJson(file: string) {
