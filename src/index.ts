@@ -172,6 +172,13 @@ export default class Config {
     this.prefix = this.getPrefix();
   }
 
+  public saveConfigJson(data: object) {
+    assert(typeof data === "object");
+    assert(!Array.isArray(data));
+
+    fs.writeFileSync(this.str("configdir"), JSON.stringify(data));
+  }
+
   public filter(name: string) {
     assert(typeof name === "string");
 
