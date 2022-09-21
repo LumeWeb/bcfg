@@ -10,11 +10,11 @@ export interface Options {
   alias?: object;
 }
 export interface LoadOptions {
-  hash?: string;
-  query?: string;
-  env?: object;
-  argv?: string[];
-  config?: string;
+  hash?: string | boolean;
+  query?: string | boolean;
+  env?: object | boolean;
+  argv?: string[] | boolean;
+  config?: string | boolean;
 }
 /**
  * Config Parser
