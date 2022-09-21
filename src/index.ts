@@ -36,7 +36,7 @@ export default class Config {
   private prefix: string;
   private suffix?: string;
   private fallback?: string;
-  private options: Options;
+  private options: Options = {};
   private alias = {};
   private data = {};
   private env = {};
