@@ -115,7 +115,7 @@ class Config {
         catch (e) {
             if (e.code === "ENOENT")
                 return;
-            throw e;
+            throw new Error(`Error parsing file ${file}: ${e.message}`);
         }
         (0, bsert_1.default)(typeof json === "object", `Config file ${file} must be an object`);
         for (const key of Object.keys(json)) {
