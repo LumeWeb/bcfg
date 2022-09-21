@@ -176,10 +176,10 @@ export default class Config {
     assert(typeof data === "object");
     assert(!Array.isArray(data));
 
-    fs.writeFileSync(
-      Path.join(this.str("configdir"), file),
-      JSON.stringify(data)
-    );
+    const fullPath = Path.join(this.str("configdir"), file);
+
+    fs.writeFileSync(fullPath, JSON.stringify(data));
+    this.openJson(fullPath);
   }
 
   public filter(name: string) {
