@@ -31,7 +31,7 @@ export interface LoadOptions {
  * Config Parser
  */
 
-class Config {
+export default class Config {
   private module: string;
   private prefix: string;
   private suffix?: string;
