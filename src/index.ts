@@ -147,7 +147,7 @@ export default class Config {
       json = JSON.parse(json);
     } catch (e) {
       if (e.code === "ENOENT") return;
-      throw e;
+      throw new Error(`Error parsing file ${file}: ${e.message}`);
     }
 
     assert(typeof json === "object", `Config file ${file} must be an object`);
