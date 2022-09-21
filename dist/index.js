@@ -120,7 +120,7 @@ class Config {
         (0, bsert_1.default)(typeof json === "object", `Config file ${file} must be an object`);
         for (const key of Object.keys(json)) {
             const value = json[key];
-            switch (value) {
+            switch (true) {
                 case Array.isArray(value):
                     this.set(key, [...(this.array(key) ?? []), ...value]);
                     break;
