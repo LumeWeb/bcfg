@@ -141,11 +141,9 @@ export default class Config {
   }
 
   public openJson(file: string) {
-    const path = this.getFile(file);
-
     let json;
     try {
-      json = fs.readFileSync(path, "utf8");
+      json = fs.readFileSync(file, "utf8");
       json = JSON.parse(json);
     } catch (e) {
       if (e.code === "ENOENT") return;
