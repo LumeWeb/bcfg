@@ -40,7 +40,7 @@ export default class Config {
   open(file: string): void;
   openDir(dir: string): void;
   openJson(file: string): void;
-  saveConfigJson(data: object): void;
+  saveConfigJson(file: string, data: object): void;
   filter(name: string): Config;
   set(key: string, value: any): void;
   has(key: string): boolean;

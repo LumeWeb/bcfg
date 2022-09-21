@@ -134,10 +134,10 @@ class Config {
         }
         this.prefix = this.getPrefix();
     }
-    saveConfigJson(data) {
+    saveConfigJson(file, data) {
         (0, bsert_1.default)(typeof data === "object");
         (0, bsert_1.default)(!Array.isArray(data));
-        fs_1.default.writeFileSync(this.str("configdir"), JSON.stringify(data));
+        fs_1.default.writeFileSync(path_1.default.join(this.str("configdir"), file), JSON.stringify(data));
     }
     filter(name) {
         (0, bsert_1.default)(typeof name === "string");
