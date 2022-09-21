@@ -104,7 +104,7 @@ class Config {
     openDir(dir) {
         (0, bsert_1.default)(fs_1.default.existsSync(dir), `Directory ${dir} does not exist`);
         let files = fs_1.default.readdirSync(dir).map((item) => path_1.default.join(dir, item));
-        files.forEach(this.openJson);
+        files.forEach(this.openJson.bind(this));
     }
     openJson(file) {
         let json;
