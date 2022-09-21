@@ -157,9 +157,7 @@ export default class Config {
 
       switch (value) {
         case Array.isArray(value):
-          let newVal = this.array(key) ?? [];
-          newVal.push(value);
-          this.set(key, newVal);
+          this.set(key, [...(this.array(key) ?? []), ...value]);
           break;
         default:
           this.set(key, value);
