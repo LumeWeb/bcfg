@@ -172,11 +172,14 @@ export default class Config {
     this.prefix = this.getPrefix();
   }
 
-  public saveConfigJson(data: object) {
+  public saveConfigJson(file: string, data: object) {
     assert(typeof data === "object");
     assert(!Array.isArray(data));
 
-    fs.writeFileSync(this.str("configdir"), JSON.stringify(data));
+    fs.writeFileSync(
+      Path.join(this.str("configdir"), file),
+      JSON.stringify(data)
+    );
   }
 
   public filter(name: string) {
