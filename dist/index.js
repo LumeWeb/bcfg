@@ -135,6 +135,9 @@ class Config {
         (0, bsert_1.default)(typeof data === "object");
         (0, bsert_1.default)(!Array.isArray(data));
         const fullPath = path_1.default.join(this.str("configdir"), file);
+        if (!fs_1.default.existsSync(fullPath)) {
+            fs_1.default.mkdirSync(fullPath, { recursive: true });
+        }
         fs_1.default.writeFileSync(fullPath, JSON.stringify(data));
         this.openJson(fullPath);
     }
