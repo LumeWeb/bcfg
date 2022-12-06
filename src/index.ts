@@ -80,6 +80,7 @@ export default class Config {
       }
     }
   }
+
   public inject(options: object) {
     for (const key of Object.keys(options)) {
       const value = options[key];
@@ -173,6 +174,10 @@ export default class Config {
     assert(!Array.isArray(data));
 
     const fullPath = Path.join(this.str("configdir"), file);
+
+    if (!fs.existsSync(fullPath)) {
+      fs.mkdirSync(fullPath, { recursive: true });
+    }
 
     fs.writeFileSync(fullPath, JSON.stringify(data));
     this.openJson(fullPath);
@@ -317,6 +322,7 @@ export default class Config {
 
     return value;
   }
+
   int(key, fallback = null) {
     const value = this.get(key);
 
@@ -398,6 +404,7 @@ export default class Config {
 
     return num;
   }
+
   ufloat(key, fallback = null) {
     const value = this.float(key);
     if (value === null) {
@@ -424,6 +431,7 @@ export default class Config {
       throw new Error(`${fmt(key)} must be a fixed number.`);
     }
   }
+
   ufixed(key, exp, fallback = null) {
     const value = this.fixed(key, exp);
 
@@ -473,6 +481,7 @@ export default class Config {
 
     throw new Error(`${fmt(key)} must be a boolean.`);
   }
+
   buf(key: string, fallback = null, enc: BufferEncoding = "hex") {
     const value = this.get(key);
 
@@ -875,6 +884,7 @@ export default class Config {
 
     return this.parseForm(query, "?", this.query);
   }
+
   public parseHash(hash: string) {
     if (typeof hash !== "string") {
       if (!global.location) {
