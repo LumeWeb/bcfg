@@ -134,9 +134,10 @@ class Config {
     saveConfigJson(file, data) {
         (0, bsert_1.default)(typeof data === "object");
         (0, bsert_1.default)(!Array.isArray(data));
-        const fullPath = path_1.default.join(this.str("configdir"), file);
-        if (!fs_1.default.existsSync(fullPath)) {
-            fs_1.default.mkdirSync(fullPath, { recursive: true });
+        const configDir = this.str("configdir");
+        const fullPath = path_1.default.join(configDir, file);
+        if (!fs_1.default.existsSync(configDir)) {
+            fs_1.default.mkdirSync(configDir, { recursive: true });
         }
         fs_1.default.writeFileSync(fullPath, JSON.stringify(data));
         this.openJson(fullPath);
