@@ -173,10 +173,11 @@ export default class Config {
     assert(typeof data === "object");
     assert(!Array.isArray(data));
 
-    const fullPath = Path.join(this.str("configdir"), file);
+    const configDir = this.str("configdir");
+    const fullPath = Path.join(configDir, file);
 
-    if (!fs.existsSync(fullPath)) {
-      fs.mkdirSync(fullPath, { recursive: true });
+    if (!fs.existsSync(configDir)) {
+      fs.mkdirSync(configDir, { recursive: true });
     }
 
     fs.writeFileSync(fullPath, JSON.stringify(data));
