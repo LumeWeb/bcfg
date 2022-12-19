@@ -4,46 +4,22 @@
  * https://github.com/bcoin-org/bcoin
  */
 /// <reference types="node" />
-export interface Options {
-    suffix?: string;
-    fallback?: string;
-    alias?: object;
-}
-export interface LoadOptions {
-    hash?: string | boolean;
-    query?: string | boolean;
-    env?: object | boolean;
-    argv?: string[] | boolean;
-    config?: string | boolean;
-}
+import arg from "arg";
 /**
  * Config Parser
  */
 export default class Config {
     private module;
-    private prefix;
-    private suffix?;
-    private fallback?;
-    private options;
-    private alias;
     private data;
-    private env;
-    private args;
-    private argv;
-    private pass;
-    private query;
-    private hash;
-    constructor(module: string, options?: Options);
-    private init;
+    constructor(module: string);
     inject(options: object): void;
-    load(options: LoadOptions): void;
-    open(file: string): void;
+    load(): void;
     openDir(dir: string): void;
-    openJson(file: string): void;
-    saveConfigJson(file: string, data: object): void;
-    filter(name: string): Config;
+    open(file: string): void;
+    save(file: string, data: object): void;
     set(key: string, value: any): void;
-    has(key: string): boolean;
+    has(key: string): any;
+    private normalize;
     get(key: string, fallback?: any): any;
     typeOf(key: string): "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function" | "null";
     str(key: string, fallback?: any): any;
@@ -58,16 +34,7 @@ export default class Config {
     array(key: string, fallback?: any): any;
     obj(key: string, fallback?: any): any;
     func(key: string, fallback?: any): any;
-    path(key: string, fallback?: any): any;
     mb(key: string, fallback?: any): any;
-    getSuffix(): any;
-    getPrefix(): string;
-    getFile(file: string): any;
-    location(file: string): string;
-    parseConfig(text: string): void;
-    parseArg(argv?: string[]): void;
+    parseArg(args: arg.Result<any>): void;
     parseEnv(env?: object): void;
-    parseQuery(query: string): void | {};
-    parseHash(hash: string): void | {};
-    parseForm(query: string, ch: string, map: object): void;
 }
