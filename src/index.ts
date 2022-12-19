@@ -77,7 +77,10 @@ export default class Config {
       const value = json[key];
 
       let keyPath = key.split(".");
-      let isArray = typeof parseInt(keyPath.pop()) === "number";
+      let isArray =
+        key.includes(".") &&
+        keyPath.length > 1 &&
+        typeof parseInt(keyPath.pop()) === "number";
 
       if (isArray) {
         let itemPath = keyPath.join(".");
