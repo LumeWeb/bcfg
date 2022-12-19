@@ -160,7 +160,7 @@ export default class Config {
 
     key = this.normalize(key);
 
-    return objectPath.get(this.data, key);
+    return objectPath.get(this.data, key, fallback);
   }
 
   public typeOf(key: string) {
