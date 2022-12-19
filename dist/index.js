@@ -63,7 +63,7 @@ class Config {
         (0, bsert_1.default)(typeof json === "object", `Config file ${file} must be an object`);
         const settings = (0, deep_to_flat_object_1.default)(json);
         for (const key of Object.keys(settings)) {
-            const value = json[key];
+            const value = settings[key];
             let keyPath = key.split(".");
             let isArray = key.includes(".") &&
                 keyPath.length > 1 &&
