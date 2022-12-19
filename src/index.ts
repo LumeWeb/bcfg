@@ -435,7 +435,7 @@ export default class Config {
   }
 
   public parseArg(args: arg.Result<any>) {
-    for (let key in args) {
+    for (let key in args._) {
       let newKey = key.replace("-", "");
       objectPath.set(this.data, newKey, args[key]);
     }
