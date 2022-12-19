@@ -65,7 +65,9 @@ class Config {
         for (const key of Object.keys(settings)) {
             const value = json[key];
             let keyPath = key.split(".");
-            let isArray = typeof parseInt(keyPath.pop()) === "number";
+            let isArray = key.includes(".") &&
+                keyPath.length > 1 &&
+                typeof parseInt(keyPath.pop()) === "number";
             if (isArray) {
                 let itemPath = keyPath.join(".");
                 let item = this.get(itemPath, []);
@@ -127,7 +129,7 @@ class Config {
         }
         (0, bsert_1.default)(typeof key === "string", "Key must be a string.");
         key = this.normalize(key);
-        return object_path_1.default.get(this.data, key);
+        return object_path_1.default.get(this.data, key, fallback);
     }
     typeOf(key) {
         const value = this.get(key);
