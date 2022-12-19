@@ -331,7 +331,7 @@ class Config {
         return value * 1024 * 1024;
     }
     parseArg(args) {
-        for (let key in args) {
+        for (let key in args._) {
             let newKey = key.replace("-", "");
             object_path_1.default.set(this.data, newKey, args[key]);
         }
