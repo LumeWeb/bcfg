@@ -8,24 +8,10 @@
 
 import assert from "bsert";
 import Path from "path";
-import os from "os";
 import fs from "fs";
-
-const HOME = os.homedir ? os.homedir() : "/";
-
-export interface Options {
-  suffix?: string;
-  fallback?: string;
-  alias?: object;
-}
-
-export interface LoadOptions {
-  hash?: string | boolean;
-  query?: string | boolean;
-  env?: object | boolean;
-  argv?: string[] | boolean;
-  config?: string | boolean;
-}
+import arg from "arg";
+import objectPath from "object-path";
+import deepToFlatObject from "deep-to-flat-object";
 
 /**
  * Config Parser
@@ -33,52 +19,13 @@ export interface LoadOptions {
 
 export default class Config {
   private module: string;
-  private prefix: string;
-  private suffix?: string;
-  private fallback?: string;
-  private options: Options = {};
-  private alias = {};
   private data = {};
-  private env = {};
-  private args = {};
-  private argv: any[] = [];
-  private pass: any[] = [];
-  private query = {};
-  private hash = {};
 
-  constructor(module: string, options?: Options) {
+  constructor(module: string) {
     assert(typeof module === "string");
     assert(module.length > 0);
 
     this.module = module;
-    this.prefix = Path.join(HOME, `.${module}`);
-
-    if (options) {
-      this.init(options);
-    }
-  }
-
-  private init(options: Options) {
-    assert(options && typeof options === "object");
-
-    if (options.suffix != null) {
-      assert(typeof options.suffix === "string");
-      this.suffix = options.suffix;
-    }
-
-    if (options.fallback != null) {
-      assert(typeof options.fallback === "string");
-      this.fallback = options.fallback;
-    }
-
-    if (options.alias) {
-      assert(typeof options.alias === "object");
-      for (const key of Object.keys(options.alias)) {
-        const value = options.alias[key];
-        assert(typeof value === "string");
-        this.alias[key] = value;
-      }
-    }
   }
 
   public inject(options: object) {
@@ -86,8 +33,6 @@ export default class Config {
       const value = options[key];
 
       switch (key) {
-        case "hash":
-        case "query":
         case "env":
         case "argv":
         case "config":
@@ -98,50 +43,23 @@ export default class Config {
     }
   }
 
-  public load(options: LoadOptions) {
-    if (options.hash) {
-      this.parseHash(options.hash as string);
-    }
+  public load() {
+    const args = arg({}, { permissive: true });
 
-    if (options.query) {
-      this.parseQuery(options.query as string);
-    }
-
-    if (options.env) {
-      this.parseEnv(options.env as object);
-    }
-
-    if (options.argv) {
-      this.parseArg(options.argv as string[]);
-    }
-
-    this.prefix = this.getPrefix();
-  }
-
-  public open(file: string) {
-    const path = this.getFile(file);
-
-    let text;
-    try {
-      text = fs.readFileSync(path, "utf8");
-    } catch (e) {
-      if (e.code === "ENOENT") return;
-      throw e;
-    }
-
-    this.parseConfig(text);
-
-    this.prefix = this.getPrefix();
+    this.parseArg(args);
   }
 
   public openDir(dir: string) {
     assert(fs.existsSync(dir), `Directory ${dir} does not exist`);
 
-    let files = fs.readdirSync(dir).map((item) => Path.join(dir, item));
-    files.forEach(this.openJson.bind(this));
+    let files = fs
+      .readdirSync(dir)
+      .filter((item) => item.endsWith(".json"))
+      .map((item) => Path.join(dir, item));
+    files.forEach(this.open.bind(this));
   }
 
-  public openJson(file: string) {
+  public open(file: string) {
     let json;
     try {
       json = fs.readFileSync(file, "utf8");
@@ -153,23 +71,27 @@ export default class Config {
 
     assert(typeof json === "object", `Config file ${file} must be an object`);
 
-    for (const key of Object.keys(json)) {
+    const settings = deepToFlatObject(json);
+
+    for (const key of Object.keys(settings)) {
       const value = json[key];
 
-      switch (true) {
-        case Array.isArray(value):
-          this.set(key, [...(this.array(key) ?? []), ...value]);
-          break;
-        default:
-          this.set(key, value);
-          break;
-      }
-    }
+      let keyPath = key.split(".");
+      let isArray = typeof parseInt(keyPath.pop()) === "number";
 
-    this.prefix = this.getPrefix();
+      if (isArray) {
+        let itemPath = keyPath.join(".");
+        let item = this.get(itemPath, []);
+        item.push(value);
+        this.set(itemPath, item);
+        continue;
+      }
+
+      this.set(key, value);
+    }
   }
 
-  public saveConfigJson(file: string, data: object) {
+  public save(file: string, data: object) {
     assert(typeof data === "object");
     assert(!Array.isArray(data));
 
@@ -181,27 +103,7 @@ export default class Config {
     }
 
     fs.writeFileSync(fullPath, JSON.stringify(data));
-    this.openJson(fullPath);
-  }
-
-  public filter(name: string) {
-    assert(typeof name === "string");
-
-    const child = new Config(this.module);
-
-    child.prefix = this.prefix;
-    child.suffix = this.suffix;
-    child.fallback = this.fallback;
-    child.argv = this.argv;
-    child.pass = this.pass;
-
-    _filter(name, this.env, child.env);
-    _filter(name, this.args, child.args);
-    _filter(name, this.query, child.query);
-    _filter(name, this.hash, child.hash);
-    _filter(name, this.options, child.options);
-
-    return child;
+    this.open(fullPath);
   }
 
   public set(key: string, value: any) {
@@ -211,40 +113,35 @@ export default class Config {
       return;
     }
 
-    key = key.replace(/-/g, "");
-    key = key.toLowerCase();
+    key = this.normalize(key);
 
-    this.options[key] = value;
+    objectPath.set(this.data, key, value);
+
+    this.data[key] = value;
   }
 
   public has(key: string) {
-    if (typeof key === "number") {
-      assert(key >= 0, "Index must be positive.");
-      return key < this.argv.length;
-    }
-
     assert(typeof key === "string", "Key must be a string.");
 
     key = key.replace(/-/g, "");
     key = key.toLowerCase();
 
-    if (key in this.hash && this.hash[key] !== null) {
-      return true;
-    }
-    if (key in this.query && this.query[key] !== null) {
-      return true;
-    }
-    if (key in this.args && this.args[key] !== null) {
-      return true;
-    }
-    if (key in this.env && this.env[key] !== null) {
-      return true;
-    }
-    if (key in this.data && this.data[key] !== null) {
-      return true;
+    return objectPath.has(this.data, key);
+  }
+
+  private normalize(key: string, env = false): string {
+    assert(typeof key === "string", "Key must be a string.");
+
+    if (env) {
+      key = key.replace(/__/g, ".");
+      key = key.replace(/_/g, "");
+    } else {
+      key = key.replace(/-/g, "");
     }
 
-    return this.options[key] !== null;
+    key = key.toLowerCase();
+
+    return key;
   }
 
   public get(key: string, fallback = null) {
@@ -259,45 +156,11 @@ export default class Config {
       return fallback;
     }
 
-    if (typeof key === "number") {
-      assert(key >= 0, "Index must be positive.");
-
-      if (key >= this.argv.length) {
-        return fallback;
-      }
-
-      if (this.argv[key] != null) {
-        return this.argv[key];
-      }
-
-      return fallback;
-    }
-
     assert(typeof key === "string", "Key must be a string.");
 
-    key = key.replace(/-/g, "");
-    key = key.toLowerCase();
+    key = this.normalize(key);
 
-    if (key in this.hash && this.hash[key] !== null) {
-      return this.hash[key];
-    }
-    if (key in this.query && this.query[key] !== null) {
-      return this.query[key];
-    }
-    if (key in this.args && this.args[key] !== null) {
-      return this.args[key];
-    }
-    if (key in this.env && this.env[key] !== null) {
-      return this.env[key];
-    }
-    if (key in this.data && this.data[key] !== null) {
-      return this.data[key];
-    }
-    if (key in this.options && this.options[key] !== null) {
-      return this.options[key];
-    }
-
-    return fallback;
+    return objectPath.get(this.data, key);
   }
 
   public typeOf(key: string) {
@@ -561,30 +424,6 @@ export default class Config {
     return value;
   }
 
-  public path(key: string, fallback = null) {
-    let value = this.str(key);
-    if (value === null) {
-      return fallback;
-    }
-
-    if (value.length === 0) {
-      return fallback;
-    }
-
-    switch (value[0]) {
-      case "~": // home dir
-        value = Path.join(HOME, value.substring(1));
-        break;
-      case "@": // prefix
-        value = Path.join(this.prefix, value.substring(1));
-        break;
-      default: // cwd
-        break;
-    }
-
-    return Path.normalize(value);
-  }
-
   public mb(key: string, fallback = null) {
     const value = this.uint(key);
 
@@ -595,233 +434,10 @@ export default class Config {
     return value * 1024 * 1024;
   }
 
-  public getSuffix() {
-    if (!this.suffix) {
-      throw new Error("No suffix presented.");
-    }
-
-    const suffix = this.str(this.suffix, this.fallback);
-
-    assert(isAlpha(suffix), "Bad suffix.");
-
-    return suffix;
-  }
-
-  public getPrefix() {
-    let prefix = this.str("prefix");
-
-    if (prefix) {
-      if (prefix[0] === "~") {
-        prefix = Path.join(HOME, prefix.substring(1));
-      }
-    } else {
-      prefix = Path.join(HOME, `.${this.module}`);
-    }
-
-    if (this.suffix) {
-      const suffix = this.str(this.suffix);
-
-      if (suffix) {
-        assert(isAlpha(suffix), "Bad suffix.");
-        if (this.fallback && suffix !== this.fallback) {
-          prefix = Path.join(prefix, suffix);
-        }
-      }
-    }
-
-    return Path.normalize(prefix);
-  }
-
-  public getFile(file: string) {
-    const name = this.str("config");
-
-    if (name) {
-      return name;
-    }
-
-    return Path.join(this.prefix, file);
-  }
-
-  public location(file: string) {
-    return Path.join(this.prefix, file);
-  }
-
-  public parseConfig(text: string) {
-    assert(typeof text === "string", "Config must be text.");
-
-    if (text.charCodeAt(0) === 0xfeff) {
-      text = text.substring(1);
-    }
-
-    text = text.replace(/\r\n/g, "\n");
-    text = text.replace(/\r/g, "\n");
-    text = text.replace(/\\\n/g, "");
-
-    let num = 0;
-
-    for (const chunk of text.split("\n")) {
-      const line = chunk.trim();
-
-      num += 1;
-
-      if (line.length === 0) {
-        continue;
-      }
-
-      if (line[0] === "#") {
-        continue;
-      }
-
-      const index = line.indexOf(":");
-
-      if (index === -1) {
-        throw new Error(`Expected ':' on line ${num}: "${line}".`);
-      }
-
-      let key = line.substring(0, index).trim();
-
-      key = key.replace(/\-/g, "");
-
-      if (!isLowerKey(key)) {
-        throw new Error(`Invalid option on line ${num}: ${key}.`);
-      }
-
-      const value = line.substring(index + 1).trim();
-
-      if (value.length === 0) {
-        continue;
-      }
-
-      const alias = this.alias[key];
-
-      if (alias) {
-        key = alias;
-      }
-
-      this.data[key] = value;
-    }
-  }
-
-  public parseArg(argv?: string[]) {
-    if (!argv || typeof argv !== "object") argv = process.argv;
-
-    assert(Array.isArray(argv));
-
-    let last = null;
-    let pass = false;
-
-    for (let i = 2; i < argv.length; i++) {
-      const arg = argv[i];
-
-      assert(typeof arg === "string");
-
-      if (arg === "--") {
-        pass = true;
-        continue;
-      }
-
-      if (pass) {
-        this.pass.push(arg);
-        continue;
-      }
-
-      if (arg.length === 0) {
-        last = null;
-        continue;
-      }
-
-      if (arg.indexOf("--") === 0) {
-        const index = arg.indexOf("=");
-
-        let key = null;
-        let value = null;
-        let empty = false;
-
-        if (index !== -1) {
-          // e.g. --opt=val
-          key = arg.substring(2, index);
-          value = arg.substring(index + 1);
-          last = null;
-          empty = false;
-        } else {
-          // e.g. --opt
-          key = arg.substring(2);
-          value = "true";
-          last = null;
-          empty = true;
-        }
-
-        key = key.replace(/\-/g, "");
-
-        if (!isLowerKey(key)) {
-          throw new Error(`Invalid argument: --${key}.`);
-        }
-
-        if (value.length === 0) {
-          continue;
-        }
-
-        // Do not allow one-letter aliases.
-        if (key.length > 1) {
-          const alias = this.alias[key];
-          if (alias) {
-            key = alias;
-          }
-        }
-
-        this.args[key] = value;
-
-        if (empty) {
-          last = key;
-        }
-
-        continue;
-      }
-
-      if (arg[0] === "-") {
-        // e.g. -abc
-        last = null;
-
-        for (let j = 1; j < arg.length; j++) {
-          let key = arg[j];
-
-          if (
-            (key < "a" || key > "z") &&
-            (key < "A" || key > "Z") &&
-            (key < "0" || key > "9") &&
-            key !== "?"
-          ) {
-            throw new Error(`Invalid argument: -${key}.`);
-          }
-
-          const alias = this.alias[key];
-
-          if (alias) {
-            key = alias;
-          }
-
-          this.args[key] = "true";
-
-          last = key;
-        }
-
-        continue;
-      }
-
-      // e.g. foo
-      const value = arg;
-
-      if (value.length === 0) {
-        last = null;
-        continue;
-      }
-
-      if (last) {
-        this.args[last] = value;
-        last = null;
-      } else {
-        this.argv.push(value);
-      }
+  public parseArg(args: arg.Result<any>) {
+    for (let key in args) {
+      let newKey = key.replace("-", "");
+      objectPath.set(this.data, newKey, args[key]);
     }
   }
 
@@ -843,108 +459,22 @@ export default class Config {
 
       assert(typeof value === "string");
 
-      if (key.indexOf(prefix) !== 0) continue;
-
-      key = key.substring(prefix.length);
-      key = key.replace(/_/g, "");
+      if (key.indexOf(prefix) !== 0) {
+        continue;
+      }
 
       if (!isUpperKey(key)) {
         continue;
       }
 
-      if (value.length === 0) {
-        continue;
-      }
-
-      key = key.toLowerCase();
-
-      // Do not allow one-letter aliases.
-      if (key.length > 1) {
-        const alias = this.alias[key];
-        if (alias) {
-          key = alias;
-        }
-      }
-
-      this.env[key] = value;
-    }
-  }
-
-  public parseQuery(query: string) {
-    if (typeof query !== "string") {
-      if (!global.location) {
-        return {};
-      }
-
-      query = global.location.search;
-
-      if (typeof query !== "string") {
-        return {};
-      }
-    }
-
-    return this.parseForm(query, "?", this.query);
-  }
-
-  public parseHash(hash: string) {
-    if (typeof hash !== "string") {
-      if (!global.location) {
-        return {};
-      }
-
-      hash = global.location.hash;
-
-      if (typeof hash !== "string") {
-        return {};
-      }
-    }
-
-    return this.parseForm(hash, "#", this.hash);
-  }
-
-  public parseForm(query: string, ch: string, map: object) {
-    assert(typeof query === "string");
-
-    if (query.length === 0) {
-      return;
-    }
-
-    if (query[0] === ch) {
-      query = query.substring(1);
-    }
-
-    for (const pair of query.split("&")) {
-      const index = pair.indexOf("=");
-
-      let key, value;
-      if (index !== -1) {
-        key = pair.substring(0, index);
-        value = pair.substring(index + 1);
-      } else {
-        key = pair;
-        value = "true";
-      }
-
-      key = unescape(key);
-      key = key.replace(/\-/g, "");
-
-      if (!isLowerKey(key)) {
-        continue;
-      }
-
-      value = unescape(value);
+      key = key.substring(prefix.length);
+      key = this.normalize(key, true);
 
       if (value.length === 0) {
         continue;
       }
 
-      const alias = this.alias[key];
-
-      if (alias) {
-        key = alias;
-      }
-
-      map[key] = value;
+      objectPath.set(this.data, key);
     }
   }
 }
@@ -965,15 +495,6 @@ function fmt(key: string[] | string | number) {
   return key;
 }
 
-function unescape(str: string) {
-  try {
-    str = decodeURIComponent(str);
-    str = str.replace(/\+/g, " ");
-  } catch (e) {}
-  str = str.replace(/\0/g, "");
-  return str;
-}
-
 function isAlpha(str: string) {
   return /^[a-z0-9_\-]+$/i.test(str);
 }
@@ -982,29 +503,12 @@ function isKey(key: string) {
   return /^[a-zA-Z0-9]+$/.test(key);
 }
 
-function isLowerKey(key: string) {
-  if (!isKey(key)) {
-    return false;
-  }
-
-  return !/[A-Z]/.test(key);
-}
-
 function isUpperKey(key: string) {
   if (!isKey(key)) {
     return false;
   }
 
   return !/[a-z]/.test(key);
-}
-
-function _filter(name: string, a: object | any[], b: object | any[]) {
-  for (const key of Object.keys(a)) {
-    if (key.length > name.length && key.indexOf(name) === 0) {
-      const sub = key.substring(name.length);
-      b[sub] = a[key];
-    }
-  }
 }
 
 function fromFloat(num: number, exp: number) {

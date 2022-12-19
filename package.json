@@ -12,7 +12,10 @@
         "test": "bmocha --reporter spec test/*-test.js"
     },
     "dependencies": {
-        "bsert": "~0.0.10"
+        "arg": "^5.0.2",
+        "bsert": "~0.0.10",
+        "deep-to-flat-object": "^1.0.1",
+        "object-path": "^0.11.8"
     },
     "devDependencies": {
         "@types/node": "^18.7.18"
