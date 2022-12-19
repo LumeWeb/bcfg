@@ -74,7 +74,7 @@ export default class Config {
     const settings = deepToFlatObject(json);
 
     for (const key of Object.keys(settings)) {
-      const value = json[key];
+      const value = settings[key];
 
       let keyPath = key.split(".");
       let isArray =
