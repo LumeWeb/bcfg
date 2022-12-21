@@ -94,7 +94,7 @@ export default class Config {
     }
   }
 
-  public save(file: string, data: object) {
+  public save(file: string, data: object): void {
     assert(typeof data === "object");
     assert(!Array.isArray(data));
 
@@ -107,6 +107,10 @@ export default class Config {
 
     fs.writeFileSync(fullPath, JSON.stringify(data));
     this.open(fullPath);
+  }
+
+  public savePath(file: string, path: string): void {
+    this.save(file, this.get(path));
   }
 
   public set(key: string, value: any) {
