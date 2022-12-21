@@ -82,7 +82,7 @@ class Config {
         (0, bsert_1.default)(typeof data === "object");
         (0, bsert_1.default)(!Array.isArray(data));
         const configDir = this.str("configdir");
-        const fullPath = path_1.default.join(configDir, file);
+        const fullPath = path_1.default.join(configDir, `${file}.json`);
         if (!fs_1.default.existsSync(configDir)) {
             fs_1.default.mkdirSync(configDir, { recursive: true });
         }
