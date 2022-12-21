@@ -17,6 +17,7 @@ export default class Config {
     openDir(dir: string): void;
     open(file: string): void;
     save(file: string, data: object): void;
+    savePath(file: string, path: string): void;
     set(key: string, value: any): void;
     has(key: string): any;
     private normalize;

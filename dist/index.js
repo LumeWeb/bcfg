@@ -89,6 +89,9 @@ class Config {
         fs_1.default.writeFileSync(fullPath, JSON.stringify(data));
         this.open(fullPath);
     }
+    savePath(file, path) {
+        this.save(file, this.get(path));
+    }
     set(key, value) {
         (0, bsert_1.default)(typeof key === "string", "Key must be a string.");
         if (value == null) {
