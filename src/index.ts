@@ -99,7 +99,7 @@ export default class Config {
     assert(!Array.isArray(data));
 
     const configDir = this.str("configdir");
-    const fullPath = Path.join(configDir, file);
+    const fullPath = Path.join(configDir, `${file}.json`);
 
     if (!fs.existsSync(configDir)) {
       fs.mkdirSync(configDir, { recursive: true });
