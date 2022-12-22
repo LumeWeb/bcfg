@@ -75,21 +75,6 @@ export default class Config {
 
     for (const key of Object.keys(settings)) {
       const value = settings[key];
-
-      let keyPath = key.split(".");
-      let isArray =
-        key.includes(".") &&
-        keyPath.length > 1 &&
-        typeof parseInt(keyPath.pop()) === "number";
-
-      if (isArray) {
-        let itemPath = keyPath.join(".");
-        let item = this.get(itemPath, []);
-        item.push(value);
-        this.set(itemPath, item);
-        continue;
-      }
-
       this.set(key, value);
     }
   }
