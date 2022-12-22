@@ -64,17 +64,6 @@ class Config {
         const settings = (0, deep_to_flat_object_1.default)(json);
         for (const key of Object.keys(settings)) {
             const value = settings[key];
-            let keyPath = key.split(".");
-            let isArray = key.includes(".") &&
-                keyPath.length > 1 &&
-                typeof parseInt(keyPath.pop()) === "number";
-            if (isArray) {
-                let itemPath = keyPath.join(".");
-                let item = this.get(itemPath, []);
-                item.push(value);
-                this.set(itemPath, item);
-                continue;
-            }
             this.set(key, value);
         }
     }
@@ -99,7 +88,6 @@ class Config {
         }
         key = this.normalize(key);
         object_path_1.default.set(this.data, key, value);
-        this.data[key] = value;
     }
     has(key) {
         (0, bsert_1.default)(typeof key === "string", "Key must be a string.");
