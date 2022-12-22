@@ -123,8 +123,6 @@ export default class Config {
     key = this.normalize(key);
 
     objectPath.set(this.data, key, value);
-
-    this.data[key] = value;
   }
 
   public has(key: string) {
