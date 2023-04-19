@@ -11,7 +11,8 @@ import arg from "arg";
 export default class Config {
     private module;
     private data;
-    constructor(module: string);
+    private configProperty;
+    constructor(module: string, configProperty: string);
     inject(options: object): void;
     load(): void;
     openDir(dir: string): void;

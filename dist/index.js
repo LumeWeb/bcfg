@@ -20,10 +20,12 @@ const deep_to_flat_object_1 = __importDefault(require("deep-to-flat-object"));
 class Config {
     module;
     data = {};
-    constructor(module) {
+    configProperty;
+    constructor(module, configProperty) {
         (0, bsert_1.default)(typeof module === "string");
         (0, bsert_1.default)(module.length > 0);
         this.module = module;
+        this.configProperty = configProperty;
     }
     inject(options) {
         for (const key of Object.keys(options)) {
@@ -70,7 +72,7 @@ class Config {
     save(file, data) {
         (0, bsert_1.default)(typeof data === "object");
         (0, bsert_1.default)(!Array.isArray(data));
-        const configDir = this.str("configdir");
+        const configDir = this.str(this.configProperty);
         const fullPath = path_1.default.join(configDir, `${file}.json`);
         if (!fs_1.default.existsSync(configDir)) {
             fs_1.default.mkdirSync(configDir, { recursive: true });
