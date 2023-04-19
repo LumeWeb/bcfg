@@ -20,12 +20,14 @@ import deepToFlatObject from "deep-to-flat-object";
 export default class Config {
   private module: string;
   private data = {};
+  private configProperty;
 
-  constructor(module: string) {
+  constructor(module: string, configProperty: string) {
     assert(typeof module === "string");
     assert(module.length > 0);
 
     this.module = module;
+    this.configProperty = configProperty;
   }
 
   public inject(options: object) {
@@ -83,7 +85,7 @@ export default class Config {
     assert(typeof data === "object");
     assert(!Array.isArray(data));
 
-    const configDir = this.str("configdir");
+    const configDir = this.str(this.configProperty);
     const fullPath = Path.join(configDir, `${file}.json`);
 
     if (!fs.existsSync(configDir)) {
