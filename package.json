@@ -1,12 +1,16 @@
 {
     "name": "@lumeweb/relay-cfg",
     "version": "0.1.7",
+    "main": "lib/index.js",
     "license": "MIT",
     "authors": [
         "Christopher Jeffrey <chjjeffrey@gmail.com>",
         "Hammer Technologies LLC <contact@lumeweb.com>"
     ],
-    "main": "dist/index.js",
+    "repository": {
+        "type": "git",
+        "url": "gitea@git.lumeweb.com:LumeWeb/relay-cfg.git"
+    },
     "scripts": {
         "prepare": "presetter bootstrap",
         "build": "run build",
@@ -17,10 +21,13 @@
         "presetter": "*"
     },
     "readme": "ERROR: No README data found!",
-    "_id": "@lumeweb/cfg@0.1.7",
+    "_id": "@lumeweb/relay-cfg@0.1.7",
     "dependencies": {
         "bsert": "^0.0.12",
         "deep-to-flat-object": "^1.0.1",
         "object-path": "^0.11.8"
-    }
+    },
+    "files": [
+        "lib"
+    ]
 }
