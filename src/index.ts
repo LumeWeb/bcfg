@@ -1,4 +1,17 @@
-/*!
+/* eslint-disable eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable sonarjs/no-duplicate-string */
+/* eslint-disable no-param-reassign */
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable sonarjs/cognitive-complexity */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable jsdoc/require-jsdoc */
+/* !
  * config.js - configuration parsing for bcoin
  * Copyright (c) 2016-2017, Christopher Jeffrey (MIT License).
  * https://github.com/bcoin-org/bcoin
@@ -34,6 +47,7 @@ export default class Config {
     for (const key of Object.keys(options)) {
       const value = options[key];
 
+      // eslint-disable-next-line default-case
       switch (key) {
         case "env":
         case "argv":
@@ -67,7 +81,9 @@ export default class Config {
       json = fs.readFileSync(file, "utf8");
       json = JSON.parse(json);
     } catch (e) {
-      if (e.code === "ENOENT") return;
+      if (e.code === "ENOENT") {
+        return;
+      }
       throw new Error(`Error parsing file ${file}: ${e.message}`);
     }
 
@@ -85,7 +101,7 @@ export default class Config {
     assert(typeof data === "object");
     assert(!Array.isArray(data));
 
-    const configDir = this.str(this.configProperty);
+    const configDir = this.str(this.configProperty) as string;
     const fullPath = Path.join(configDir, `${file}.json`);
 
     if (!fs.existsSync(configDir)) {
@@ -103,7 +119,7 @@ export default class Config {
   public set(key: string, value: any) {
     assert(typeof key === "string", "Key must be a string.");
 
-    if (value == null) {
+    if (value === null) {
       return;
     }
 
@@ -179,7 +195,7 @@ export default class Config {
     return value;
   }
 
-  int(key, fallback = null) {
+  public int(key, fallback = null) {
     const value = this.get(key);
 
     if (value === null) {
@@ -198,7 +214,7 @@ export default class Config {
       return value;
     }
 
-    if (!/^\-?\d+$/.test(value)) {
+    if (!/^-?\d+$/.test(value)) {
       throw new Error(`${fmt(key)} must be an int.`);
     }
 
@@ -211,7 +227,7 @@ export default class Config {
     return num;
   }
 
-  uint(key, fallback = null) {
+  public uint(key, fallback = null) {
     const value = this.int(key);
 
     if (value === null) {
@@ -225,7 +241,7 @@ export default class Config {
     return value;
   }
 
-  float(key, fallback = null) {
+  public float(key, fallback = null) {
     const value = this.get(key);
 
     if (value === null) {
@@ -244,7 +260,7 @@ export default class Config {
       return value;
     }
 
-    if (!/^\-?\d*(?:\.\d*)?$/.test(value)) {
+    if (!/^-?\d*(?:\.\d*)?$/.test(value)) {
       throw new Error(`${fmt(key)} must be a float.`);
     }
 
@@ -261,7 +277,7 @@ export default class Config {
     return num;
   }
 
-  ufloat(key, fallback = null) {
+  public ufloat(key, fallback = null) {
     const value = this.float(key);
     if (value === null) {
       return fallback;
@@ -274,7 +290,7 @@ export default class Config {
     return value;
   }
 
-  fixed(key, exp, fallback = null) {
+  public fixed(key, exp, fallback = null) {
     const value = this.float(key);
 
     if (value === null) {
@@ -288,7 +304,7 @@ export default class Config {
     }
   }
 
-  ufixed(key, exp, fallback = null) {
+  public ufixed(key, exp, fallback = null) {
     const value = this.fixed(key, exp);
 
     if (value === null) {
@@ -302,7 +318,7 @@ export default class Config {
     return value;
   }
 
-  bool(key, fallback = null) {
+  public bool(key, fallback = null) {
     const value = this.get(key);
 
     if (value === null) {
@@ -338,7 +354,7 @@ export default class Config {
     throw new Error(`${fmt(key)} must be a boolean.`);
   }
 
-  buf(key: string, fallback = null, enc: BufferEncoding = "hex") {
+  public buf(key: string, fallback = null, enc: BufferEncoding = "hex") {
     const value = this.get(key);
 
     if (value === null) {
@@ -376,7 +392,7 @@ export default class Config {
     }
 
     const parts = value.trim().split(/\s*,\s*/);
-    const result = [];
+    const result: string[] = [];
     for (const part of parts) {
       if (part.length === 0) {
         continue;
@@ -423,10 +439,12 @@ export default class Config {
       return fallback;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     return value * 1024 * 1024;
   }
 
   public parseArg(args: arg.Result<any>) {
+    // eslint-disable-next-line @typescript-eslint/no-for-in-array
     for (let key in args._) {
       let newKey = key.replace("-", "");
       objectPath.set(this.data, newKey, args[key]);
@@ -444,7 +462,7 @@ export default class Config {
       env = process.env;
     }
 
-    assert(env && typeof env === "object");
+    assert(typeof env === "object");
 
     for (let key of Object.keys(env)) {
       const value = env[key];
@@ -488,7 +506,7 @@ function fmt(key: string[] | string | number) {
 }
 
 function isAlpha(str: string) {
-  return /^[a-z0-9_\-]+$/i.test(str);
+  return /^[a-z0-9_-]+$/i.test(str);
 }
 
 function isKey(key: string) {
@@ -546,7 +564,7 @@ function fromFloat(num: number, exp: number) {
 
   assert(
     /^\d+$/.test(hi) && /^\d+$/.test(lo),
-    "Non-numeric characters in fixed number string."
+    "Non-numeric characters in fixed number string.",
   );
 
   hi = parseInt(hi, 10);
@@ -558,7 +576,7 @@ function fromFloat(num: number, exp: number) {
 
   assert(
     hi < maxHi || (hi === maxHi && lo <= maxLo),
-    "Fixed number string exceeds 2^53-1."
+    "Fixed number string exceeds 2^53-1.",
   );
 
   return sign * (hi * mult + lo);
