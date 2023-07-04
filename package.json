@@ -1,6 +1,6 @@
 {
     "name": "@lumeweb/relay-cfg",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "main": "lib/index.js",
     "license": "MIT",
     "authors": [
@@ -21,7 +21,6 @@
         "presetter": "*"
     },
     "readme": "ERROR: No README data found!",
-    "_id": "@lumeweb/relay-cfg@0.1.7",
     "dependencies": {
         "bsert": "^0.0.12",
         "deep-to-flat-object": "^1.0.1",
