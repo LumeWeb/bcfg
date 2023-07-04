@@ -1,5 +1,5 @@
 {
-    "name": "@lumeweb/cfg",
+    "name": "@lumeweb/relay-cfg",
     "version": "0.1.7",
     "license": "MIT",
     "authors": [
@@ -8,17 +8,19 @@
     ],
     "main": "dist/index.js",
     "scripts": {
-        "lint": "eslint lib/ || exit 0",
-        "test": "bmocha --reporter spec test/*-test.js"
-    },
-    "dependencies": {
-        "arg": "^5.0.2",
-        "bsert": "~0.0.10",
-        "deep-to-flat-object": "^1.0.1",
-        "object-path": "^0.11.8"
+        "prepare": "presetter bootstrap",
+        "build": "run build",
+        "semantic-release": "semantic-release"
     },
     "devDependencies": {
-        "@types/node": "^18.7.18",
-        "typescript": "^4.9.4"
+        "@lumeweb/node-library-preset": "^0.2.7",
+        "presetter": "*"
+    },
+    "readme": "ERROR: No README data found!",
+    "_id": "@lumeweb/cfg@0.1.7",
+    "dependencies": {
+        "bsert": "^0.0.12",
+        "deep-to-flat-object": "^1.0.1",
+        "object-path": "^0.11.8"
     }
 }
