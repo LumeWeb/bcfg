@@ -31,7 +31,7 @@ import objectPath from "object-path";
  * Config Parser
  */
 
-export default class Config {
+export class Config {
   private module: string;
   private data = {};
   private configProperty;
