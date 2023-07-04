@@ -19,12 +19,13 @@
 
 "use strict";
 
-import assert from "bsert";
-import Path from "path";
 import fs from "fs";
+import Path from "path";
+
 import arg from "arg";
-import objectPath from "object-path";
+import assert from "bsert";
 import deepToFlatObject from "deep-to-flat-object";
+import objectPath from "object-path";
 
 /**
  * Config Parser
