@@ -445,10 +445,17 @@ export class Config {
   }
 
   public parseArg(args: arg.Result<any>) {
+    const argPairs = args._.reduce((prev: any, item: any) => {
+      const parts = item.split("=");
+      const key = parts[0].replace("-", "");
+      prev[key] = parts[1];
+
+      return prev;
+    }, {});
+
     // eslint-disable-next-line @typescript-eslint/no-for-in-array
-    for (let key in args._) {
-      let newKey = key.replace("-", "");
-      objectPath.set(this.data, newKey, args[key]);
+    for (const key of argPairs) {
+      objectPath.set(this.data, key, argPairs[key]);
     }
   }
 
