@@ -1,3 +1,10 @@
+## [0.1.15](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.14...v0.1.15) (2023-07-07)
+
+
+### Bug Fixes
+
+* need to use set, not objectPath directly ([82f603c](https://git.lumeweb.com/LumeWeb/relay-cfg/commit/82f603c00a44f6bf82da8b26acb4e37ad2df33ae))
+
 ## [0.1.14](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.13...v0.1.14) (2023-07-07)
 
 
