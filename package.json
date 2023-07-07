@@ -33,6 +33,7 @@
     },
     "readme": "ERROR: No README data found!",
     "dependencies": {
+        "arg": "^5.0.2",
         "bsert": "^0.0.12",
         "deep-to-flat-object": "^1.0.1",
         "object-path": "^0.11.8"
