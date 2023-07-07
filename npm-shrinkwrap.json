@@ -1,12 +1,12 @@
 {
     "name": "@lumeweb/relay-cfg",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "lockfileVersion": 3,
     "requires": true,
     "packages": {
         "": {
             "name": "@lumeweb/relay-cfg",
-            "version": "0.1.12",
+            "version": "0.1.13",
             "license": "MIT",
             "dependencies": {
                 "arg": "^5.0.2",
