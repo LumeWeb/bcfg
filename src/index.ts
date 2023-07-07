@@ -454,7 +454,7 @@ export class Config {
     }, {});
 
     // eslint-disable-next-line @typescript-eslint/no-for-in-array
-    for (const key of argPairs) {
+    for (const key in argPairs) {
       objectPath.set(this.data, key, argPairs[key]);
     }
   }
