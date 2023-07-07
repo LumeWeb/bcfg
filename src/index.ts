@@ -447,7 +447,7 @@ export class Config {
   public parseArg(args: arg.Result<any>) {
     const argPairs = args._.reduce((prev: any, item: any) => {
       const parts = item.split("=");
-      const key = parts[0].replace("-", "");
+      const key = parts[0].replace(/-/g, "");
       prev[key] = parts[1];
 
       return prev;
