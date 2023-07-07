@@ -1,3 +1,5 @@
+## [0.1.11](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.10...v0.1.11) (2023-07-07)
+
 ## [0.1.10](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.9...v0.1.10) (2023-07-07)
 
 ## [0.1.9](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.8...v0.1.9) (2023-07-04)
