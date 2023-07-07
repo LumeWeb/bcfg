@@ -15,7 +15,8 @@
             },
             "devDependencies": {
                 "@lumeweb/node-library-preset": "^0.2.7",
-                "presetter": "*"
+                "presetter": "*",
+                "presetter-preset-hybrid": "^4.0.1"
             }
         },
         "node_modules/@aashutoshrathi/word-wrap": {

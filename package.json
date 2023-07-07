@@ -3,6 +3,16 @@
     "version": "0.1.8",
     "main": "lib/index.js",
     "license": "MIT",
+    "type": "module",
+    "types": "lib/index.d.ts",
+    "module": "lib/index.mjs",
+    "exports": {
+        ".": {
+            "require": "./lib/index.js",
+            "import": "./lib/index.mjs"
+        },
+        "./package.json": "./package.json"
+    },
     "authors": [
         "Christopher Jeffrey <chjjeffrey@gmail.com>",
         "Hammer Technologies LLC <contact@lumeweb.com>"
@@ -18,7 +28,8 @@
     },
     "devDependencies": {
         "@lumeweb/node-library-preset": "^0.2.7",
-        "presetter": "*"
+        "presetter": "*",
+        "presetter-preset-hybrid": "^4.0.1"
     },
     "readme": "ERROR: No README data found!",
     "dependencies": {

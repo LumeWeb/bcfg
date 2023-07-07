@@ -1,5 +1,6 @@
 {
-  "preset": [
-    "@lumeweb/node-library-preset"
-  ]
+    "preset": [
+        "presetter-preset-hybrid",
+        "@lumeweb/node-library-preset"
+    ]
 }
