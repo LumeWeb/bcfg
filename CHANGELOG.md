@@ -1,3 +1,10 @@
+## [0.1.14](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.13...v0.1.14) (2023-07-07)
+
+
+### Bug Fixes
+
+* use regex ([4475f12](https://git.lumeweb.com/LumeWeb/relay-cfg/commit/4475f122f12ccd7ecbaf055eb8ffc2596d4c71aa))
+
 ## [0.1.13](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.12...v0.1.13) (2023-07-07)
 
 
