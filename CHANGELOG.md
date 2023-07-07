@@ -1,3 +1,10 @@
+## [0.1.13](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.12...v0.1.13) (2023-07-07)
+
+
+### Bug Fixes
+
+* bad for loop ([ecb2990](https://git.lumeweb.com/LumeWeb/relay-cfg/commit/ecb29905726324165548f06ac505d0edfa3c4028))
+
 ## [0.1.12](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.11...v0.1.12) (2023-07-07)
 
 ## [0.1.11](https://git.lumeweb.com/LumeWeb/relay-cfg/compare/v0.1.10...v0.1.11) (2023-07-07)

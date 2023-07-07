@@ -1,6 +1,6 @@
 {
     "name": "@lumeweb/relay-cfg",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "main": "lib/index.js",
     "license": "MIT",
     "type": "module",
